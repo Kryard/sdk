@@ -1,4 +1,24 @@
+# Node / TypeScript
 node_modules/
 dist/
 *.tgz
-pnpm-workspace.yaml
+.npmrc
+
+# Rust
+target/
+Cargo.lock
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+build/
+*.egg-info/
+
+# Go
+# (binaries) — keep go.sum; ignore built artifacts
+bin/
+
+# misc
+.DS_Store
+*.log

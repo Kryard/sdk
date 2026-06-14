@@ -1,0 +1,21 @@
+{
+  "description": "HPKE (RFC 9180) export-bundle suite for ACTIVITY_TYPE_EXPORT_PRIVATE_KEY. The signer HPKE-seals the (signer-decrypted) private key to a caller-supplied P-256 recipient public key; the plaintext never leaves the signer except HPKE-encrypted. This is a clean RFC-9180 bundle (NOT byte-compatible with Turnkey's decryptExportBundle).",
+  "source": "services/api/src/signerClient.ts (SignerExportBundle) + packages/typescript/src/export.ts + packages/typescript/test/export.test.ts",
+  "suite": {
+    "kem": "KEM_P256_HKDF_SHA256",
+    "kdf": "HKDF_SHA256",
+    "aead": "AES256GCM",
+    "kemKdfAeadLabel": "P256_HKDF_SHA256/HKDF_SHA256/AES256GCM",
+    "info": "kryard-export-v1",
+    "aad": "the privateKeyId string (UTF-8), bound as HPKE associated data — opening with a different privateKeyId MUST fail"
+  },
+  "recipientPublicKeyFormat": "SEC1 uncompressed P-256: 0x04 || X(32) || Y(32) = 65 bytes = 130 hex chars (matches /^04[0-9a-f]{128}$/). The signer also accepts a compressed 33-byte recipient key.",
+  "bundleShape": {
+    "encappedPublic": "base64(enc) — HPKE encapsulated key (sender ephemeral public key)",
+    "ciphertext": "base64(ct) — AEAD-sealed private key",
+    "info": "kryard-export-v1",
+    "kemKdfAead": "P256_HKDF_SHA256/HKDF_SHA256/AES256GCM"
+  },
+  "staticDecryptVector": null,
+  "roundTripNote": "No static decrypt vector is captured because HPKE seal output is non-deterministic (fresh ephemeral KEM key per seal), so a fixed ciphertext is not reproducible across languages. Conformance is asserted in-language by a round-trip: generate a recipient P-256 keypair, server-seal a known secret to it under this suite/info/aad, then decryptExportBundle and assert the recovered bytes equal the secret (and that a mismatched privateKeyId aad fails to open). See packages/typescript/test/export.test.ts for the reference round-trip."
+}

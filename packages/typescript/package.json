@@ -1,0 +1,77 @@
+{
+  "name": "@kryard/sdk",
+  "version": "0.2.0",
+  "description": "Client for Kryard's Turnkey-compatible wallet infrastructure: X-Stamp'd key creation, secp256k1 signing (raw payload + EVM transaction), HPKE private-key export, and the managed EIP-7702 relay (sponsored execute with optional ERC-20 gas).",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "license": "MIT",
+  "author": "foreseerco",
+  "keywords": [
+    "kryard",
+    "wallet-infrastructure",
+    "signing",
+    "secp256k1",
+    "key-management",
+    "hpke",
+    "key-export",
+    "turnkey",
+    "turnkey-compatible",
+    "eip-7702",
+    "7702",
+    "relayer",
+    "paymaster",
+    "gasless",
+    "sponsored-transaction",
+    "account-abstraction",
+    "viem"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kryard/sdk.git",
+    "directory": "packages/typescript"
+  },
+  "homepage": "https://github.com/Kryard/sdk/tree/main/packages/typescript#readme",
+  "bugs": "https://github.com/Kryard/sdk/issues",
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run typecheck && npm run test"
+  },
+  "dependencies": {
+    "@hpke/core": "^1.9.0",
+    "@noble/curves": "^1.9.7",
+    "@noble/hashes": "^1.8.0"
+  },
+  "peerDependencies": {
+    "viem": "^2.21.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "viem": "^2.21.0",
+    "vitest": "^2.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

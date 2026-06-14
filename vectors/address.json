@@ -1,0 +1,322 @@
+[
+  {
+    "name": "ethereum_ganache0_compressed",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "03e68acfc0253a10620dff706b0a1b1f1f5833ea3beb3bde2250d5f271f3563606",
+    "format": "ADDRESS_FORMAT_ETHEREUM",
+    "address": "0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1",
+    "source": "registry_test.go (Ganache account #0; priv 4f3edf98…23b1d)"
+  },
+  {
+    "name": "ethereum_ganache0_uncompressed",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "04e68acfc0253a10620dff706b0a1b1f1f5833ea3beb3bde2250d5f271f3563606672ebc45e0b7ea2e816ecb70ca03137b1c9476eec63d4632e990020b7b6fba39",
+    "format": "ADDRESS_FORMAT_ETHEREUM",
+    "address": "0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1",
+    "source": "registry_test.go (Ganache account #0; uncompressed SEC1 input normalizes to the same address)"
+  },
+  {
+    "name": "solana_zero_seed_ed25519",
+    "curve": "CURVE_ED25519",
+    "publicKey": "3b6a27bcceb6a42d62a3a8d02a6f0d73653215771de243a63ac048a18b59da29",
+    "format": "ADDRESS_FORMAT_SOLANA",
+    "address": "4zvwRjXUKGfvwnParsHAS3HuSVzV5cA4McphgmoCtajS",
+    "source": "registry_test.go (RFC 8032 all-zero ed25519 seed public key)"
+  },
+  {
+    "name": "p256_base_point_compressed",
+    "curve": "CURVE_P256",
+    "publicKey": "036b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296",
+    "format": "ADDRESS_FORMAT_COMPRESSED",
+    "address": "036b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296",
+    "source": "p256_test.go (scalar=1 → P-256 base point G; COMPRESSED address == compressed pubkey)"
+  },
+  {
+    "name": "cosmos",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "02ba66a84cf7839af172a13e7fc9f5e7008cb8bca1585f8f3bafb3039eda3c1fdd",
+    "format": "ADDRESS_FORMAT_COSMOS",
+    "address": "cosmos1r5v5srda7xfth3hn2s26txvrcrntldjumt8mhl",
+    "source": "tier23_test.go (cosmospy test_vector)"
+  },
+  {
+    "name": "sei",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "02ba66a84cf7839af172a13e7fc9f5e7008cb8bca1585f8f3bafb3039eda3c1fdd",
+    "format": "ADDRESS_FORMAT_SEI",
+    "address": "sei1r5v5srda7xfth3hn2s26txvrcrntldjuk8kd37",
+    "source": "tier23_test.go (same HASH160 data as cosmos; HRP sei)"
+  },
+  {
+    "name": "tron",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0456f19ba7de92264d94f9b6600ec05c16c0b25a064e2ee1cf5bf0dd9661d04515c99c3a6b42b2c574232a5b951bf57cf706bbfd36377b406f9313772f65612cd0",
+    "format": "ADDRESS_FORMAT_TRON",
+    "address": "TQHAvs2ZFTbsd93ycTfw1Wuf1e4WsPZWCp",
+    "source": "tier23_test.go (rust-tron test_address_from_public; 0x04 SEC1 tag prepended to X||Y)"
+  },
+  {
+    "name": "doge_mainnet",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "025a8ad8881f6facdc949c4a4d03257414153faea67e96acf57344660080610788",
+    "format": "ADDRESS_FORMAT_DOGE_MAINNET",
+    "address": "DAcDAtJRztxBHyA6D6h8du1HguyTR43Mas",
+    "source": "tier23_test.go (bip_utils test_P2PKH; version 0x1e)"
+  },
+  {
+    "name": "doge_testnet",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "02b9988be7219be78b82e659155d02d3e1462f3febe7c87d33964b37831efd8884",
+    "format": "ADDRESS_FORMAT_DOGE_TESTNET",
+    "address": "nprZmJBRhatuwtUXBSjjd3nCG9R8DDm3y3",
+    "source": "tier23_test.go (bip_utils test_P2PKH; version 0x71)"
+  },
+  {
+    "name": "xrp",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "030D58EB48B4420B1F7B9DF55087E0E29FEF0E8468F9A6825B01CA2C361042D435",
+    "format": "ADDRESS_FORMAT_XRP",
+    "address": "rU6K7V3Po4snVhBBaU29sesqs2qTQJWDw1",
+    "source": "tier23_test.go (xrpl.js ripple-keypairs fixtures, secp256k1 keypair)"
+  },
+  {
+    "name": "bitcoin_mainnet_p2pkh",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "format": "ADDRESS_FORMAT_BITCOIN_MAINNET_P2PKH",
+    "address": "1BgGZ9tcN4rm9KBzDn7KprQz87SZ26SAMH",
+    "source": "bitcoin_test.go (generator point G compressed)"
+  },
+  {
+    "name": "bitcoin_mainnet_p2sh",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "format": "ADDRESS_FORMAT_BITCOIN_MAINNET_P2SH",
+    "address": "3JvL6Ymt8MVWiCNHC7oWU6nLeHNJKLZGLN",
+    "source": "bitcoin_test.go (generator point G compressed)"
+  },
+  {
+    "name": "bitcoin_mainnet_p2wpkh",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "format": "ADDRESS_FORMAT_BITCOIN_MAINNET_P2WPKH",
+    "address": "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4",
+    "source": "bitcoin_test.go (BIP-173 §Examples test-vector address; generator point G)"
+  },
+  {
+    "name": "bitcoin_mainnet_p2wsh",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "format": "ADDRESS_FORMAT_BITCOIN_MAINNET_P2WSH",
+    "address": "bc1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3qccfmv3",
+    "source": "bitcoin_test.go (BIP-173 P2WSH example; witnessScript = <G> OP_CHECKSIG)"
+  },
+  {
+    "name": "bitcoin_mainnet_p2tr",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "format": "ADDRESS_FORMAT_BITCOIN_MAINNET_P2TR",
+    "address": "bc1pmfr3p9j00pfxjh0zmgp99y8zftmd3s5pmedqhyptwy6lm87hf5sspknck9",
+    "source": "bitcoin_test.go (BIP-341 key-path tweak of G's x-only key)"
+  },
+  {
+    "name": "bitcoin_testnet_p2pkh",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "format": "ADDRESS_FORMAT_BITCOIN_TESTNET_P2PKH",
+    "address": "mrCDrCybB6J1vRfbwM5hemdJz73FwDBC8r",
+    "source": "bitcoin_test.go (generator point G compressed; testnet version bytes)"
+  },
+  {
+    "name": "bitcoin_testnet_p2sh",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "format": "ADDRESS_FORMAT_BITCOIN_TESTNET_P2SH",
+    "address": "2NAUYAHhujozruyzpsFRP63mbrdaU5wnEpN",
+    "source": "bitcoin_test.go (generator point G compressed; testnet version bytes)"
+  },
+  {
+    "name": "bitcoin_testnet_p2wpkh",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "format": "ADDRESS_FORMAT_BITCOIN_TESTNET_P2WPKH",
+    "address": "tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx",
+    "source": "bitcoin_test.go (BIP-173 testnet example)"
+  },
+  {
+    "name": "bitcoin_testnet_p2wsh",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "format": "ADDRESS_FORMAT_BITCOIN_TESTNET_P2WSH",
+    "address": "tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3q0sl5k7",
+    "source": "bitcoin_test.go (generator point G; testnet HRP tb)"
+  },
+  {
+    "name": "bitcoin_testnet_p2tr",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "format": "ADDRESS_FORMAT_BITCOIN_TESTNET_P2TR",
+    "address": "tb1pmfr3p9j00pfxjh0zmgp99y8zftmd3s5pmedqhyptwy6lm87hf5ssk79hv2",
+    "source": "bitcoin_test.go (BIP-341 key-path; testnet HRP tb)"
+  },
+  {
+    "name": "bitcoin_signet_p2pkh",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "format": "ADDRESS_FORMAT_BITCOIN_SIGNET_P2PKH",
+    "address": "mrCDrCybB6J1vRfbwM5hemdJz73FwDBC8r",
+    "source": "bitcoin_test.go (signet shares testnet address params)"
+  },
+  {
+    "name": "bitcoin_signet_p2sh",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "format": "ADDRESS_FORMAT_BITCOIN_SIGNET_P2SH",
+    "address": "2NAUYAHhujozruyzpsFRP63mbrdaU5wnEpN",
+    "source": "bitcoin_test.go (signet shares testnet address params)"
+  },
+  {
+    "name": "bitcoin_signet_p2wpkh",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "format": "ADDRESS_FORMAT_BITCOIN_SIGNET_P2WPKH",
+    "address": "tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx",
+    "source": "bitcoin_test.go (signet shares testnet address params)"
+  },
+  {
+    "name": "bitcoin_signet_p2wsh",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "format": "ADDRESS_FORMAT_BITCOIN_SIGNET_P2WSH",
+    "address": "tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3q0sl5k7",
+    "source": "bitcoin_test.go (signet shares testnet address params)"
+  },
+  {
+    "name": "bitcoin_signet_p2tr",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "format": "ADDRESS_FORMAT_BITCOIN_SIGNET_P2TR",
+    "address": "tb1pmfr3p9j00pfxjh0zmgp99y8zftmd3s5pmedqhyptwy6lm87hf5ssk79hv2",
+    "source": "bitcoin_test.go (signet shares testnet address params)"
+  },
+  {
+    "name": "bitcoin_regtest_p2pkh",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "format": "ADDRESS_FORMAT_BITCOIN_REGTEST_P2PKH",
+    "address": "mrCDrCybB6J1vRfbwM5hemdJz73FwDBC8r",
+    "source": "bitcoin_test.go (generator point G; regtest uses testnet base58 version bytes)"
+  },
+  {
+    "name": "bitcoin_regtest_p2sh",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "format": "ADDRESS_FORMAT_BITCOIN_REGTEST_P2SH",
+    "address": "2NAUYAHhujozruyzpsFRP63mbrdaU5wnEpN",
+    "source": "bitcoin_test.go (generator point G; regtest uses testnet base58 version bytes)"
+  },
+  {
+    "name": "bitcoin_regtest_p2wpkh",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "format": "ADDRESS_FORMAT_BITCOIN_REGTEST_P2WPKH",
+    "address": "bcrt1qw508d6qejxtdg4y5r3zarvary0c5xw7kygt080",
+    "source": "bitcoin_test.go (generator point G; regtest HRP bcrt)"
+  },
+  {
+    "name": "bitcoin_regtest_p2wsh",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "format": "ADDRESS_FORMAT_BITCOIN_REGTEST_P2WSH",
+    "address": "bcrt1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3qzf4jry",
+    "source": "bitcoin_test.go (generator point G; regtest HRP bcrt)"
+  },
+  {
+    "name": "bitcoin_regtest_p2tr",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "format": "ADDRESS_FORMAT_BITCOIN_REGTEST_P2TR",
+    "address": "bcrt1pmfr3p9j00pfxjh0zmgp99y8zftmd3s5pmedqhyptwy6lm87hf5ssm803es",
+    "source": "bitcoin_test.go (generator point G; regtest HRP bcrt)"
+  },
+  {
+    "name": "sui_1",
+    "curve": "CURVE_ED25519",
+    "publicKey": "51d1915a8a32e3cbc64ecd070689088ace4d2be0d48e259cf4435495c7c20811",
+    "format": "ADDRESS_FORMAT_SUI",
+    "address": "0xd77a6cd55073e98d4029b1b0b8bd8d88f45f343dad2732fc9a7965094e635c55",
+    "source": "ed25519chains_test.go (Mysten Labs Sui TS SDK ed25519 fixtures)"
+  },
+  {
+    "name": "sui_2",
+    "curve": "CURVE_ED25519",
+    "publicKey": "d0f4c07d098d89a6e06da93d53fb2d599cca7399ec46aa2475adaa9d5d834df8",
+    "format": "ADDRESS_FORMAT_SUI",
+    "address": "0x7e8fd489c3d3cd9cc7cbcc577dc5d6de831e654edd9997d95c412d013e6eea23",
+    "source": "ed25519chains_test.go (Mysten Labs Sui TS SDK ed25519 fixtures)"
+  },
+  {
+    "name": "sui_3",
+    "curve": "CURVE_ED25519",
+    "publicKey": "e8bfe5d2e846b7fffd71fea72d0d3edb852fdaa6a75ff47ab67ee5594257d579",
+    "format": "ADDRESS_FORMAT_SUI",
+    "address": "0x3a1b4410ebe9c3386a429c349ba7929aafab739c277f97f32622b971972a14a2",
+    "source": "ed25519chains_test.go (Mysten Labs Sui TS SDK ed25519 fixtures)"
+  },
+  {
+    "name": "aptos",
+    "curve": "CURVE_ED25519",
+    "publicKey": "de19e5d1880cac87d57484ce9ed2e84cf0f9599f12e7cc3a52e4e7657a763f2c",
+    "format": "ADDRESS_FORMAT_APTOS",
+    "address": "0x978c213990c4833df71548df7ce49d54c759d6b6d932de22b24d56060b7af2aa",
+    "source": "ed25519chains_test.go (Aptos TS SDK ed25519 unit-test fixture)"
+  },
+  {
+    "name": "xlm_stellar",
+    "curve": "CURVE_ED25519",
+    "publicKey": "3f0c34bf93ad0d9971d04ccc90f705511c838aad9734a4a2fb0d7a03fc7fe89a",
+    "format": "ADDRESS_FORMAT_XLM",
+    "address": "GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ",
+    "source": "ed25519chains_test.go (js-stellar-base strkey unit tests)"
+  },
+  {
+    "name": "ton_v3r2",
+    "curve": "CURVE_ED25519",
+    "publicKey": "dcc39550bb494f4b493e7efe1aa18ea31470f33a2553c568cb74a17ed56790c1",
+    "format": "ADDRESS_FORMAT_TON_V3R2",
+    "address": "EQCvoBT5Keb46oUhI_DpX0WXFDdX9ZyxXBfX3FC9cZa90nQP",
+    "source": "ed25519chains_test.go (tonutils-go address_test.go fixture; @ton/ton V3R2 reproduces)"
+  },
+  {
+    "name": "ton_v4r2",
+    "curve": "CURVE_ED25519",
+    "publicKey": "c37aa92eef17323af705207413d28db47218713c4af5dcce9c7392c230264423",
+    "format": "ADDRESS_FORMAT_TON_V4R2",
+    "address": "EQDgICpEIOY6eV348OIAf8Q-spcHAt0C2qi5A4MPKP2y773N",
+    "source": "ed25519chains_test.go (@ton/ton WalletContractV4 randomTestKey('v4-treasure'))"
+  },
+  {
+    "name": "ton_v5r1",
+    "curve": "CURVE_ED25519",
+    "publicKey": "eac4ba1b5cc08f2b2be971e5c0440f662379d0ad0b54072ac85aac9a99060433",
+    "format": "ADDRESS_FORMAT_TON_V5R1",
+    "address": "EQBQSxm1QwWkY7s_bOgfSczE54Pk6cXpOYAzA5MVLuhdBdUS",
+    "source": "ed25519chains_test.go (@ton/ton WalletContractV5R1 randomTestKey('v5r1-treasure'), mainnet)"
+  },
+  {
+    "name": "spark_mainnet",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "02ccb26ba79c63aaf60c9192fd874be3087ae8d8703275df0e558704a6d3a4f132",
+    "format": "ADDRESS_FORMAT_SPARK_MAINNET",
+    "address": "spark1pgss9n9jdwnecca27cxfryhasa97xzr6arv8qvn4mu89tpcy5mf6fufjdszhxl",
+    "source": "spark_test.go (Spark SDK address.test.ts identity public key; BIP-350 bech32m)"
+  },
+  {
+    "name": "spark_regtest",
+    "curve": "CURVE_SECP256K1",
+    "publicKey": "02ccb26ba79c63aaf60c9192fd874be3087ae8d8703275df0e558704a6d3a4f132",
+    "format": "ADDRESS_FORMAT_SPARK_REGTEST",
+    "address": "sparkrt1pgss9n9jdwnecca27cxfryhasa97xzr6arv8qvn4mu89tpcy5mf6fufjlkvt2q",
+    "source": "spark_test.go (Spark SDK address.test.ts identity public key; BIP-350 bech32m)"
+  }
+]

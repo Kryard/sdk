@@ -1,0 +1,29 @@
+{
+  "description": "X-Stamp conformance vectors. The stamp is a DER P-256 signature over sha256(UTF-8 body), wrapped as base64url(JSON {publicKey, scheme, signature}). P-256 signing is deterministic (RFC 6979), so the stampHeaderValue is byte-for-byte reproducible across languages. Verify by reproducing stampHeaderValue exactly, or (for non-RFC-6979 implementations) by checking the signature verifies against publicKey over bodySha256.",
+  "source": "packages/typescript/test/stamper.test.ts + packages/typescript/src/stamper.ts; values regenerated deterministically from the same throwaway key.",
+  "scheme": "SIGNATURE_SCHEME_TK_API_P256",
+  "stampHeaderName": "X-Stamp",
+  "apiKey": {
+    "comment": "THROWAWAY test P-256 keypair — NOT a real credential.",
+    "privateKeyHex": "0000000000000000000000000000000000000000000000000000000000000001",
+    "publicKeyHexCompressed": "036b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296"
+  },
+  "vectors": [
+    {
+      "name": "org_timestamp_body",
+      "body": "{\"organizationId\":\"o\",\"timestampMs\":\"1\"}",
+      "bodySha256Hex": "58045dc2b083ad180b314d8ea7d5b339af7f74ff6cc7a35ab7cf25e2bf1debdc",
+      "signatureDerHex": "30450221009ccf7843ba49ca45e9ad937702ad953a6b20a6b95f451e569f02567a1a4e59f202202886e408433d802e253047c7ea0a64a5a5144f1d01afe19c1aec738aaea32e34",
+      "envelopeJson": "{\"publicKey\":\"036b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296\",\"scheme\":\"SIGNATURE_SCHEME_TK_API_P256\",\"signature\":\"30450221009ccf7843ba49ca45e9ad937702ad953a6b20a6b95f451e569f02567a1a4e59f202202886e408433d802e253047c7ea0a64a5a5144f1d01afe19c1aec738aaea32e34\"}",
+      "stampHeaderValue": "eyJwdWJsaWNLZXkiOiIwMzZiMTdkMWYyZTEyYzQyNDdmOGJjZTZlNTYzYTQ0MGYyNzcwMzdkODEyZGViMzNhMGY0YTEzOTQ1ZDg5OGMyOTYiLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMDljY2Y3ODQzYmE0OWNhNDVlOWFkOTM3NzAyYWQ5NTNhNmIyMGE2Yjk1ZjQ1MWU1NjlmMDI1NjdhMWE0ZTU5ZjIwMjIwMjg4NmU0MDg0MzNkODAyZTI1MzA0N2M3ZWEwYTY0YTVhNTE0NGYxZDAxYWZlMTljMWFlYzczOGFhZWEzMmUzNCJ9"
+    },
+    {
+      "name": "hello_kryard_body",
+      "body": "{\"hello\":\"kryard\"}",
+      "bodySha256Hex": "cf53e20358bf451928fec5c706c3c972b0e5e7db8b64c0eeb12827dd2a8e7108",
+      "signatureDerHex": "3046022100fd92131ab911175779f307edfed62e82b5c50ae49f0d2132e3867daf1f1c209c022100ec117b24490a3d4e0eeb2224f523bb00af28a029b76ce04831d6f59b176d07a5",
+      "envelopeJson": "{\"publicKey\":\"036b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296\",\"scheme\":\"SIGNATURE_SCHEME_TK_API_P256\",\"signature\":\"3046022100fd92131ab911175779f307edfed62e82b5c50ae49f0d2132e3867daf1f1c209c022100ec117b24490a3d4e0eeb2224f523bb00af28a029b76ce04831d6f59b176d07a5\"}",
+      "stampHeaderValue": "eyJwdWJsaWNLZXkiOiIwMzZiMTdkMWYyZTEyYzQyNDdmOGJjZTZlNTYzYTQ0MGYyNzcwMzdkODEyZGViMzNhMGY0YTEzOTQ1ZDg5OGMyOTYiLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NjAyMjEwMGZkOTIxMzFhYjkxMTE3NTc3OWYzMDdlZGZlZDYyZTgyYjVjNTBhZTQ5ZjBkMjEzMmUzODY3ZGFmMWYxYzIwOWMwMjIxMDBlYzExN2IyNDQ5MGEzZDRlMGVlYjIyMjRmNTIzYmIwMGFmMjhhMDI5Yjc2Y2UwNDgzMWQ2ZjU5YjE3NmQwN2E1In0"
+    }
+  ]
+}

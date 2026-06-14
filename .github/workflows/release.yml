@@ -1,8 +1,8 @@
 name: Release
 
-# Publish to npm on a version tag (e.g. v0.1.0). The tag must match package.json
-# version. Requires repo secret NPM_TOKEN (an npm automation token with publish
-# rights to the @kryard scope).
+# Publish @kryard/sdk (packages/typescript) to npm on a version tag (e.g. v0.2.0).
+# The tag must match the package's version. Requires repo secret NPM_TOKEN (an npm
+# automation token with publish rights to the @kryard scope).
 on:
   push:
     tags:
@@ -19,13 +19,12 @@ jobs:
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
-      # npm (not pnpm) in CI — runs esbuild's postinstall by default, avoiding
-      # pnpm's build-script approval policy.
+      # npm workspaces (not pnpm) — runs esbuild's postinstall by default.
       - run: npm install
       - run: npm run typecheck
       - run: npm run build
       - run: npm run test
-      # No --provenance: the repo is private (provenance requires a public repo).
-      - run: npm publish --access public
+      # Publish only the TypeScript workspace package.
+      - run: npm publish -w @kryard/sdk --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

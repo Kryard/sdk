@@ -1,0 +1,46 @@
+{
+  "description": "Canonical JSON conformance vectors. The canonical form recursively sorts object keys (UTF-16/codepoint ascending, as JS Array.sort default), preserves array order, and serializes with no insignificant whitespace (JSON.stringify of the key-sorted value). sha256hex is the SHA-256 of the canonical UTF-8 string, lowercase hex. This is the algorithm behind X-Stamp body hashing, activity idempotency, and policy evaluatedInputHash — every language SDK must produce identical canonical strings and hashes.",
+  "source": "services/signer/internal/canonicaljson/canonicaljson_test.go (inputs + the policy hash); the canonical strings and sha256 are reproduced with the TS/Go canonicalize algorithm (sorted keys, compact JSON, sha256).",
+  "vectors": [
+    {
+      "name": "simple_flat_object",
+      "input": { "b": 2, "a": 1, "c": 3 },
+      "canonical": "{\"a\":1,\"b\":2,\"c\":3}",
+      "sha256hex": "e6a3385fb77c287a712e7f406a451727f0625041823ecf23bea7ef39b2e39805"
+    },
+    {
+      "name": "nested_object",
+      "input": { "z": { "b": "two", "a": "one" }, "a": 1 },
+      "canonical": "{\"a\":1,\"z\":{\"a\":\"one\",\"b\":\"two\"}}",
+      "sha256hex": "94f2f3afd99e393151366090d260819f69c0f41ba18210218a6cd8a75c351a3d"
+    },
+    {
+      "name": "array_preserves_order",
+      "input": [3, 1, 2],
+      "canonical": "[3,1,2]",
+      "sha256hex": "51bda7ab4e44726cde71fcb6e4b515357059bb6b6dd5146d1fc50f73f11678c6"
+    },
+    {
+      "name": "policy_evaluated_input_hash",
+      "comment": "The realistic policy input the TS API and Go signer must agree on (normalized txFields: absent numeric/string fields present as 0 / empty string). sha256hex is the frozen evaluatedInputHash pinned in canonicaljson_test.go (wantHash).",
+      "input": {
+        "activityType": "ACTIVITY_TYPE_SIGN_TRANSACTION_V2",
+        "privateKeyId": "pk-test-001",
+        "txFields": {
+          "chainId": "0x1",
+          "data": "0x7fea8778",
+          "gas": 21000,
+          "gasPrice": "",
+          "maxFeePerGas": "",
+          "maxPriorityFeePerGas": "",
+          "methodSelector": "0x7fea8778",
+          "nonce": 0,
+          "to": "0xRouter",
+          "value": "0x0"
+        }
+      },
+      "canonical": "{\"activityType\":\"ACTIVITY_TYPE_SIGN_TRANSACTION_V2\",\"privateKeyId\":\"pk-test-001\",\"txFields\":{\"chainId\":\"0x1\",\"data\":\"0x7fea8778\",\"gas\":21000,\"gasPrice\":\"\",\"maxFeePerGas\":\"\",\"maxPriorityFeePerGas\":\"\",\"methodSelector\":\"0x7fea8778\",\"nonce\":0,\"to\":\"0xRouter\",\"value\":\"0x0\"}}",
+      "sha256hex": "578b79d207f43d043b58c7f8844f48d19908a4977b98382ca9686d2b7d26550b"
+    }
+  ]
+}

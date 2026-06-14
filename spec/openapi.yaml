@@ -1,0 +1,928 @@
+openapi: 3.1.0
+info:
+  title: Kryard API
+  version: 0.1.0
+  summary: Turnkey-compatible wallet-infrastructure API (Kryard / L3).
+  description: |
+    Kryard speaks the Turnkey wire protocol: a wire-compatible drop-in for
+    Turnkey's secp256k1 EVM signing, extended with multi-curve key creation,
+    secure HPKE export, and a managed relay tier.
+
+    **This spec is the source of truth.** SDK clients (TypeScript, Python, Rust)
+    are code-generated from it — see `spec/README.md`. Keep it in sync with the
+    L3 API (`services/api`).
+
+    ## Shape notes (compatibility beats aesthetics at the boundary)
+    - Query and submit endpoints use **`POST`**, not REST verbs.
+    - The activity response is a **single-nested** activity envelope:
+      `activity.result.<type>Result` (e.g. `activity.result.signTransactionResult`),
+      with `{seconds, nanos}` timestamps. See `tools/compat-harness/wire-contract.md`.
+    - Recognized-but-unimplemented activity types still resolve to a `FAILED`
+      activity (HTTP 200 with the activity envelope), not an HTTP error. An
+      **unknown** activity type is a 400 error envelope.
+servers:
+  - url: https://api.kryard.com
+    description: Production
+  - url: http://localhost:8787
+    description: Local wrangler dev
+
+security:
+  - XStamp: []
+
+tags:
+  - name: submit
+    description: Submit activity endpoints (mutations). All POST.
+  - name: relay
+    description: Managed relayer tier (ADR-008/012). All POST.
+
+paths:
+  /public/v1/submit/create_private_keys:
+    post:
+      tags: [submit]
+      summary: Create one or more private keys (ACTIVITY_TYPE_CREATE_PRIVATE_KEYS_V2)
+      operationId: createPrivateKeys
+      security:
+        - XStamp: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePrivateKeysRequest'
+      responses:
+        '200':
+          description: Activity envelope (COMPLETED → createPrivateKeysResult, else FAILED).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityEnvelope'
+        '400':
+          $ref: '#/components/responses/TurnkeyError'
+        '401':
+          $ref: '#/components/responses/TurnkeyError'
+
+  /public/v1/submit/sign_raw_payload:
+    post:
+      tags: [submit]
+      summary: Sign a raw payload (ACTIVITY_TYPE_SIGN_RAW_PAYLOAD_V2)
+      operationId: signRawPayload
+      security:
+        - XStamp: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignRawPayloadRequest'
+      responses:
+        '200':
+          description: Activity envelope (COMPLETED → signRawPayloadResult, else FAILED).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityEnvelope'
+        '400':
+          $ref: '#/components/responses/TurnkeyError'
+        '401':
+          $ref: '#/components/responses/TurnkeyError'
+
+  /public/v1/submit/sign_transaction:
+    post:
+      tags: [submit]
+      summary: Sign a transaction (ACTIVITY_TYPE_SIGN_TRANSACTION_V2)
+      operationId: signTransaction
+      security:
+        - XStamp: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignTransactionRequest'
+      responses:
+        '200':
+          description: |
+            Activity envelope. On COMPLETED, `signTransactionResult.signedTransaction`
+            is hex **without** the `0x` prefix (frozen Turnkey wire format).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityEnvelope'
+        '400':
+          $ref: '#/components/responses/TurnkeyError'
+        '401':
+          $ref: '#/components/responses/TurnkeyError'
+
+  /public/v1/submit/export_private_key:
+    post:
+      tags: [submit]
+      summary: Export a private key as an HPKE-sealed bundle (ACTIVITY_TYPE_EXPORT_PRIVATE_KEY)
+      operationId: exportPrivateKey
+      description: |
+        The plaintext private key is NEVER returned. The signer HPKE-seals it
+        (RFC 9180; KEM_P256_HKDF_SHA256 / HKDF_SHA256 / AES256GCM, info
+        "kryard-export-v1", aad = privateKeyId) to the caller-supplied recipient
+        P-256 public key. Open it with the matching recipient private key.
+      security:
+        - XStamp: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportPrivateKeyRequest'
+      responses:
+        '200':
+          description: Activity envelope (COMPLETED → exportPrivateKeyResult, else FAILED).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityEnvelope'
+        '400':
+          $ref: '#/components/responses/TurnkeyError'
+        '401':
+          $ref: '#/components/responses/TurnkeyError'
+
+  /public/v1/submit/create_wallet:
+    post:
+      tags: [submit]
+      summary: Create a wallet, optionally with accounts (ACTIVITY_TYPE_CREATE_WALLET)
+      operationId: createWallet
+      security:
+        - XStamp: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWalletRequest'
+      responses:
+        '200':
+          description: Activity envelope (COMPLETED → createWalletResult, else FAILED).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityEnvelope'
+        '400':
+          $ref: '#/components/responses/TurnkeyError'
+        '401':
+          $ref: '#/components/responses/TurnkeyError'
+
+  /public/v1/submit/create_wallet_accounts:
+    post:
+      tags: [submit]
+      summary: Add accounts to an existing wallet (ACTIVITY_TYPE_CREATE_WALLET_ACCOUNTS)
+      operationId: createWalletAccounts
+      security:
+        - XStamp: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWalletAccountsRequest'
+      responses:
+        '200':
+          description: Activity envelope (COMPLETED → createWalletAccountsResult, else FAILED).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityEnvelope'
+        '400':
+          $ref: '#/components/responses/TurnkeyError'
+        '401':
+          $ref: '#/components/responses/TurnkeyError'
+
+  /public/v1/relay/submit_transaction:
+    post:
+      tags: [relay]
+      summary: Build, sign, and broadcast a transaction via the managed relayer
+      operationId: relaySubmitTransaction
+      description: |
+        The relay tier is keyless: signing routes through the same policy + signer
+        path as sign_transaction (an activity, audit, and signer receipt are
+        produced). Returns the relayer transaction lifecycle record.
+      security:
+        - XStamp: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RelaySubmitTransactionRequest'
+      responses:
+        '200':
+          description: Relayer transaction record.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [transaction]
+                properties:
+                  transaction:
+                    $ref: '#/components/schemas/RelayTransaction'
+        '400':
+          $ref: '#/components/responses/TurnkeyError'
+
+  /public/v1/relay/get_transaction:
+    post:
+      tags: [relay]
+      summary: Read a relayer transaction's lifecycle state (no RPC)
+      operationId: relayGetTransaction
+      security:
+        - XStamp: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [transactionId]
+              properties:
+                transactionId:
+                  type: string
+      responses:
+        '200':
+          description: Relayer transaction record.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [transaction]
+                properties:
+                  transaction:
+                    $ref: '#/components/schemas/RelayTransaction'
+        '404':
+          $ref: '#/components/responses/TurnkeyError'
+
+  /public/v1/relay/billing_usage:
+    post:
+      tags: [relay]
+      summary: Settled relay gas usage rollup for the authenticated org
+      operationId: relayBillingUsage
+      security:
+        - XStamp: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RelayUsageQuery'
+      responses:
+        '200':
+          description: Billing usage rollup (money fields are wei strings).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [usage]
+                properties:
+                  usage:
+                    $ref: '#/components/schemas/BillingUsage'
+
+  /public/v1/relay/token_usage:
+    post:
+      tags: [relay]
+      summary: ERC-20 paymaster reimbursed-gas revenue rollup for the org
+      operationId: relayTokenUsage
+      security:
+        - XStamp: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RelayUsageQuery'
+      responses:
+        '200':
+          description: Per-token usage rollup (token amounts are decimal strings).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [usage]
+                properties:
+                  usage:
+                    $ref: '#/components/schemas/TokenUsage'
+
+  /public/v1/relay/get_balance:
+    post:
+      tags: [relay]
+      summary: Prepaid gas-tank balance for the authenticated org
+      operationId: relayGetBalance
+      security:
+        - XStamp: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Gas-tank balance (wei strings).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [balance]
+                properties:
+                  balance:
+                    $ref: '#/components/schemas/GasTankBalance'
+
+components:
+  securitySchemes:
+    XStamp:
+      type: apiKey
+      in: header
+      name: X-Stamp
+      description: |
+        Kryard authenticates each request with an `X-Stamp` header, the Turnkey
+        protocol API-key stamp.
+
+        `X-Stamp = base64url(JSON{ publicKey, scheme, signature })` where:
+        - `publicKey` — the API key's compressed P-256 public key (hex).
+        - `scheme` — `SIGNATURE_SCHEME_TK_API_P256`.
+        - `signature` — DER-encoded ECDSA P-256 signature over
+          `SHA-256(<raw request body bytes>)`.
+
+        The stamp is computed over the **exact raw body string** that is sent —
+        clients must not re-serialize after stamping. The server independently
+        canonicalizes/hashes the body for idempotency; the stamp itself is over
+        the raw bytes. Timestamp freshness is validated from `timestampMs` in the
+        body. Conformance vectors: `vectors/x-stamp.json`.
+
+  responses:
+    TurnkeyError:
+      description: Turnkey HTTP error envelope.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TurnkeyErrorBody'
+
+  schemas:
+    # ---- Enums (sourced VERBATIM from services/api/src/enums.ts) ----
+    Curve:
+      type: string
+      description: Supported signing curves.
+      enum:
+        - CURVE_SECP256K1
+        - CURVE_ED25519
+        - CURVE_P256
+
+    HashFunction:
+      type: string
+      description: Hash functions a signing operation may request (curve-specific).
+      enum:
+        - HASH_FUNCTION_KECCAK256
+        - HASH_FUNCTION_NO_OP
+        - HASH_FUNCTION_NOT_APPLICABLE
+
+    ActivityType:
+      type: string
+      description: Activity types Kryard recognizes (ADR-002 / wire contract).
+      enum:
+        - ACTIVITY_TYPE_CREATE_PRIVATE_KEYS_V2
+        - ACTIVITY_TYPE_SIGN_RAW_PAYLOAD_V2
+        - ACTIVITY_TYPE_SIGN_TRANSACTION_V2
+        - ACTIVITY_TYPE_CREATE_WALLET
+        - ACTIVITY_TYPE_CREATE_WALLET_ACCOUNTS
+        - ACTIVITY_TYPE_AUTHORIZE_PRIVY_REQUEST
+        - ACTIVITY_TYPE_EXPORT_PRIVATE_KEY
+
+    ActivityStatus:
+      type: string
+      enum:
+        - ACTIVITY_STATUS_COMPLETED
+        - ACTIVITY_STATUS_FAILED
+        - ACTIVITY_STATUS_PENDING
+
+    AddressFormat:
+      type: string
+      description: Address formats derived from a key's public key.
+      enum:
+        - ADDRESS_FORMAT_UNCOMPRESSED
+        - ADDRESS_FORMAT_COMPRESSED
+        - ADDRESS_FORMAT_ETHEREUM
+        - ADDRESS_FORMAT_COSMOS
+        - ADDRESS_FORMAT_SEI
+        - ADDRESS_FORMAT_TRON
+        - ADDRESS_FORMAT_DOGE_MAINNET
+        - ADDRESS_FORMAT_DOGE_TESTNET
+        - ADDRESS_FORMAT_XRP
+        - ADDRESS_FORMAT_SPARK_MAINNET
+        - ADDRESS_FORMAT_SPARK_REGTEST
+        - ADDRESS_FORMAT_BITCOIN_MAINNET_P2PKH
+        - ADDRESS_FORMAT_BITCOIN_MAINNET_P2SH
+        - ADDRESS_FORMAT_BITCOIN_MAINNET_P2WPKH
+        - ADDRESS_FORMAT_BITCOIN_MAINNET_P2WSH
+        - ADDRESS_FORMAT_BITCOIN_MAINNET_P2TR
+        - ADDRESS_FORMAT_BITCOIN_TESTNET_P2PKH
+        - ADDRESS_FORMAT_BITCOIN_TESTNET_P2SH
+        - ADDRESS_FORMAT_BITCOIN_TESTNET_P2WPKH
+        - ADDRESS_FORMAT_BITCOIN_TESTNET_P2WSH
+        - ADDRESS_FORMAT_BITCOIN_TESTNET_P2TR
+        - ADDRESS_FORMAT_BITCOIN_SIGNET_P2PKH
+        - ADDRESS_FORMAT_BITCOIN_SIGNET_P2SH
+        - ADDRESS_FORMAT_BITCOIN_SIGNET_P2WPKH
+        - ADDRESS_FORMAT_BITCOIN_SIGNET_P2WSH
+        - ADDRESS_FORMAT_BITCOIN_SIGNET_P2TR
+        - ADDRESS_FORMAT_BITCOIN_REGTEST_P2PKH
+        - ADDRESS_FORMAT_BITCOIN_REGTEST_P2SH
+        - ADDRESS_FORMAT_BITCOIN_REGTEST_P2WPKH
+        - ADDRESS_FORMAT_BITCOIN_REGTEST_P2WSH
+        - ADDRESS_FORMAT_BITCOIN_REGTEST_P2TR
+        - ADDRESS_FORMAT_SOLANA
+        - ADDRESS_FORMAT_SUI
+        - ADDRESS_FORMAT_APTOS
+        - ADDRESS_FORMAT_XLM
+        - ADDRESS_FORMAT_TON_V3R2
+        - ADDRESS_FORMAT_TON_V4R2
+        - ADDRESS_FORMAT_TON_V5R1
+
+    # ---- Common request envelope ----
+    SubmitRequestBase:
+      type: object
+      required: [type, timestampMs, organizationId]
+      properties:
+        type:
+          $ref: '#/components/schemas/ActivityType'
+        timestampMs:
+          type: string
+          description: |
+            Millisecond epoch as a string. Part of the idempotency hash — change
+            it to create a new activity for an otherwise-identical body.
+        organizationId:
+          type: string
+        parameters:
+          type: object
+          description: Activity-type-specific parameters (see the per-type request schemas).
+
+    # ---- Per-activity request schemas ----
+    CreatePrivateKeysRequest:
+      allOf:
+        - $ref: '#/components/schemas/SubmitRequestBase'
+        - type: object
+          properties:
+            parameters:
+              type: object
+              properties:
+                name:
+                  type: string
+                  default: unnamed
+                environment:
+                  type: string
+                  default: production
+                curve:
+                  $ref: '#/components/schemas/Curve'
+                addressFormats:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/AddressFormat'
+                importPrivateKeyHex:
+                  type: string
+                  description: |
+                    Guarded import path. Scrubbed from the persisted body — the raw
+                    key never reaches storage. Enabled only when the signer runs
+                    with ALLOW_KEY_IMPORT=true.
+
+    SignRawPayloadRequest:
+      allOf:
+        - $ref: '#/components/schemas/SubmitRequestBase'
+        - type: object
+          properties:
+            parameters:
+              type: object
+              required: [signWith, payload]
+              properties:
+                signWith:
+                  type: string
+                  description: Ethereum address or private-key id.
+                payload:
+                  type: string
+                  description: Hex string (with or without 0x prefix).
+                encoding:
+                  type: string
+                  default: PAYLOAD_ENCODING_HEXADECIMAL
+                hashFunction:
+                  $ref: '#/components/schemas/HashFunction'
+
+    SignTransactionRequest:
+      allOf:
+        - $ref: '#/components/schemas/SubmitRequestBase'
+        - type: object
+          properties:
+            parameters:
+              type: object
+              required: [signWith, unsignedTransaction]
+              properties:
+                signWith:
+                  type: string
+                  description: Ethereum address or private-key id.
+                unsignedTransaction:
+                  type: string
+                  description: Hex string (with or without 0x prefix).
+                type:
+                  type: string
+                  default: TRANSACTION_TYPE_ETHEREUM
+
+    ExportPrivateKeyRequest:
+      allOf:
+        - $ref: '#/components/schemas/SubmitRequestBase'
+        - type: object
+          properties:
+            parameters:
+              type: object
+              required: [targetPublicKey]
+              properties:
+                privateKeyId:
+                  type: string
+                  description: Key to export (alias for signWith).
+                signWith:
+                  type: string
+                  description: Address or private-key id (alternative to privateKeyId).
+                targetPublicKey:
+                  type: string
+                  description: Recipient P-256 public key (hex; uncompressed 65-byte or compressed 33-byte).
+
+    WalletAccountParam:
+      type: object
+      properties:
+        name:
+          type: string
+        curve:
+          $ref: '#/components/schemas/Curve'
+        addressFormat:
+          $ref: '#/components/schemas/AddressFormat'
+        path:
+          type: string
+
+    CreateWalletRequest:
+      allOf:
+        - $ref: '#/components/schemas/SubmitRequestBase'
+        - type: object
+          properties:
+            parameters:
+              type: object
+              properties:
+                walletName:
+                  type: string
+                  default: unnamed
+                environment:
+                  type: string
+                  default: production
+                accounts:
+                  type: array
+                  maxItems: 20
+                  items:
+                    $ref: '#/components/schemas/WalletAccountParam'
+
+    CreateWalletAccountsRequest:
+      allOf:
+        - $ref: '#/components/schemas/SubmitRequestBase'
+        - type: object
+          properties:
+            parameters:
+              type: object
+              required: [walletId]
+              properties:
+                walletId:
+                  type: string
+                environment:
+                  type: string
+                  default: production
+                accounts:
+                  type: array
+                  maxItems: 20
+                  items:
+                    $ref: '#/components/schemas/WalletAccountParam'
+
+    # ---- Activity envelope (single-nested: activity.result.<type>Result) ----
+    ActivityEnvelope:
+      type: object
+      required: [activity]
+      properties:
+        activity:
+          $ref: '#/components/schemas/Activity'
+
+    Activity:
+      type: object
+      required: [id, status, type]
+      properties:
+        id:
+          type: string
+        status:
+          $ref: '#/components/schemas/ActivityStatus'
+        type:
+          $ref: '#/components/schemas/ActivityType'
+        organizationId:
+          type: string
+        timestampMs:
+          type: string
+        createdAt:
+          $ref: '#/components/schemas/SecondsNanos'
+        updatedAt:
+          $ref: '#/components/schemas/SecondsNanos'
+        intent:
+          type: object
+          description: The recorded request intent (e.g. signTransactionIntent).
+        result:
+          $ref: '#/components/schemas/ActivityResult'
+        failure:
+          oneOf:
+            - $ref: '#/components/schemas/ActivityFailure'
+            - type: 'null'
+
+    SecondsNanos:
+      type: object
+      description: Turnkey-style timestamp.
+      properties:
+        seconds:
+          type: string
+        nanos:
+          type: string
+
+    ActivityFailure:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+
+    ActivityResult:
+      type: object
+      description: |
+        Exactly one *Result key is present, matching the activity type. Empty on
+        a FAILED activity.
+      properties:
+        createPrivateKeysResult:
+          $ref: '#/components/schemas/CreatePrivateKeysResult'
+        signRawPayloadResult:
+          $ref: '#/components/schemas/SignRawPayloadResult'
+        signTransactionResult:
+          $ref: '#/components/schemas/SignTransactionResult'
+        exportPrivateKeyResult:
+          $ref: '#/components/schemas/ExportPrivateKeyResult'
+        createWalletResult:
+          $ref: '#/components/schemas/CreateWalletResult'
+        createWalletAccountsResult:
+          $ref: '#/components/schemas/CreateWalletAccountsResult'
+
+    AddressEntry:
+      type: object
+      properties:
+        format:
+          $ref: '#/components/schemas/AddressFormat'
+        address:
+          type: string
+
+    CreatePrivateKeysResult:
+      type: object
+      properties:
+        privateKeyIds:
+          type: array
+          items:
+            type: string
+        addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressEntry'
+
+    SignRawPayloadResult:
+      type: object
+      properties:
+        r:
+          type: string
+          description: 32-byte hex, no 0x.
+        s:
+          type: string
+          description: 32-byte hex, no 0x.
+        v:
+          type: string
+          description: '"00" or "01".'
+        signerReceipt:
+          $ref: '#/components/schemas/SignerReceipt'
+
+    SignTransactionResult:
+      type: object
+      properties:
+        signedTransaction:
+          type: string
+          description: Signed transaction hex WITHOUT the 0x prefix (frozen wire format).
+        fields:
+          type: object
+          description: Decoded tx fields (metadata; not part of the Turnkey wire shape).
+        signerReceipt:
+          $ref: '#/components/schemas/SignerReceipt'
+
+    ExportPrivateKeyResult:
+      type: object
+      properties:
+        privateKeyId:
+          type: string
+        exportBundle:
+          $ref: '#/components/schemas/ExportBundle'
+
+    CreateWalletResult:
+      type: object
+      properties:
+        walletId:
+          type: string
+        addresses:
+          type: array
+          items:
+            type: string
+
+    CreateWalletAccountsResult:
+      type: object
+      properties:
+        addresses:
+          type: array
+          items:
+            type: string
+
+    ExportBundle:
+      type: object
+      description: RFC 9180 HPKE-sealed bundle. See vectors/hpke.json.
+      properties:
+        encappedPublic:
+          type: string
+          description: base64(enc) — HPKE encapsulated key.
+        ciphertext:
+          type: string
+          description: base64(ct) — sealed private key.
+        info:
+          type: string
+          example: kryard-export-v1
+        kemKdfAead:
+          type: string
+          example: P256_HKDF_SHA256/HKDF_SHA256/AES256GCM
+
+    SignerReceipt:
+      type: object
+      description: Receipt accompanying each signing operation.
+      properties:
+        keyId:
+          type: string
+        publicKey:
+          type: string
+        payloadHash:
+          type: string
+        signatureHash:
+          type: string
+        signerBuildId:
+          type: string
+
+    # ---- Relay schemas ----
+    RelaySubmitTransactionRequest:
+      type: object
+      required: [signWith, chainId, to]
+      properties:
+        signWith:
+          type: string
+          description: Relayer key id or Ethereum address.
+        chainId:
+          type: string
+          description: Decimal chain id.
+        to:
+          type: string
+        value:
+          type: string
+          description: Decimal or 0x-hex wei.
+        data:
+          type: string
+        gasLimit:
+          type: string
+        speed:
+          type: string
+        idempotencyKey:
+          type: string
+        authorizationList:
+          type: array
+          description: EIP-7702 client-signed authorizations.
+          items:
+            type: object
+        gasToken:
+          type: string
+        gasTokenAmount:
+          type: string
+
+    RelayTransaction:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        nonce:
+          type: integer
+        chainId:
+          type: string
+        to:
+          type: string
+        value:
+          type: string
+        txHash:
+          oneOf:
+            - type: string
+            - type: 'null'
+        minedBlock:
+          oneOf:
+            - type: integer
+            - type: 'null'
+        confirmations:
+          type: integer
+        failure:
+          oneOf:
+            - type: string
+            - type: 'null'
+        createdAt:
+          type: string
+
+    RelayUsageQuery:
+      type: object
+      properties:
+        fromMs:
+          type: integer
+        toMs:
+          type: integer
+
+    BillingUsage:
+      type: object
+      properties:
+        organizationId:
+          type: string
+        fromMs:
+          type: integer
+        toMs:
+          type: integer
+        txCount:
+          type: integer
+        gasCostWei:
+          type: string
+        markupBps:
+          type: integer
+        billableWei:
+          type: string
+        byChain:
+          type: array
+          items:
+            type: object
+            properties:
+              chainId:
+                type: string
+              txCount:
+                type: integer
+              gasCostWei:
+                type: string
+
+    TokenUsage:
+      type: object
+      properties:
+        organizationId:
+          type: string
+        fromMs:
+          type: integer
+        toMs:
+          type: integer
+        byToken:
+          type: array
+          items:
+            type: object
+            properties:
+              gasToken:
+                type: string
+              txCount:
+                type: integer
+              tokenAmount:
+                type: string
+
+    GasTankBalance:
+      type: object
+      properties:
+        organizationId:
+          type: string
+        depositedWei:
+          type: string
+        debitedWei:
+          type: string
+        reservedWei:
+          type: string
+        availableWei:
+          type: string
+
+    TurnkeyErrorBody:
+      type: object
+      description: Turnkey HTTP error envelope (e.g. unknown activity type, bad stamp).
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+        turnkeyErrorCode:
+          type: string
