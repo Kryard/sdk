@@ -1,4 +1,4 @@
-# @kryard/relay-sdk
+# @kryard/sdk
 
 A client for **Kryard's Turnkey-compatible wallet infrastructure**:
 
@@ -19,7 +19,7 @@ Published to both npm and GitHub Packages (same version):
 
 ```bash
 # npm (public)
-npm i @kryard/relay-sdk viem
+npm i @kryard/sdk viem
 ```
 
 From **GitHub Packages**, add to your `.npmrc` first:
@@ -29,7 +29,7 @@ From **GitHub Packages**, add to your `.npmrc` first:
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}   # a PAT with read:packages
 ```
 
-then `npm i @kryard/relay-sdk viem`.
+then `npm i @kryard/sdk viem`.
 
 ## Quick start
 
@@ -37,7 +37,7 @@ then `npm i @kryard/relay-sdk viem`.
 import { createWalletClient, http, type Hex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { sepolia } from "viem/chains";
-import { KryardRelayClient, createApiKeyStamper, sponsorExecute, type UserSigner, type Call } from "@kryard/relay-sdk";
+import { KryardRelayClient, createApiKeyStamper, sponsorExecute, type UserSigner, type Call } from "@kryard/sdk";
 
 // 1. The Kryard relay client (the relayer ORG's API key stamps the request).
 const client = new KryardRelayClient({
@@ -103,7 +103,7 @@ inner delegate signature yourself, then use `sponsorCall` — the SDK signs only
 7702 authorization and submits, making no assumption about the delegate:
 
 ```ts
-import { sponsorCall } from "@kryard/relay-sdk";
+import { sponsorCall } from "@kryard/sdk";
 
 // You build the call to your delegate (e.g. SweepDelegate.sweep(order, sweepSig)).
 const sweepData = encodeFunctionData({ abi: SWEEP_DELEGATE_ABI, functionName: "sweep", args: [order, sweepSig] });
@@ -129,7 +129,7 @@ envelope, throwing an `ActivityError` (carrying the server's `code` + `message`)
 an activity does not complete.
 
 ```ts
-import { KryardClient, createApiKeyStamper, ActivityError } from "@kryard/relay-sdk";
+import { KryardClient, createApiKeyStamper, ActivityError } from "@kryard/sdk";
 
 const kryard = new KryardClient({
   baseUrl: "https://api.kryard.com",
@@ -184,7 +184,7 @@ const { privateKey } = await kryard.exportPrivateKey({ signWith: privateKeyId })
 Bring-your-own-recipient (e.g. an HSM or air-gapped key holds the recipient secret):
 
 ```ts
-import { decryptExportBundle, generateRecipientKeyPair } from "@kryard/relay-sdk";
+import { decryptExportBundle, generateRecipientKeyPair } from "@kryard/sdk";
 
 const recipient = await generateRecipientKeyPair();           // P-256, SEC1-uncompressed hex
 const { privateKeyId: resolvedId, exportBundle } = await kryard.exportPrivateKeyBundle({
