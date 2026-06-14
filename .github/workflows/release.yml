@@ -19,8 +19,10 @@ jobs:
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
-      # npm workspaces (not pnpm) — runs esbuild's postinstall by default.
-      - run: npm install
+      # npm workspaces (not pnpm). Use `npm ci` for a clean, lockfile-exact install:
+      # `npm install` doesn't reliably pull platform-matched optional deps in CI
+      # (the @rollup/rollup-linux-x64-gnu / npm#4828 bug), which breaks vitest.
+      - run: npm ci
       - run: npm run typecheck
       - run: npm run build
       - run: npm run test
